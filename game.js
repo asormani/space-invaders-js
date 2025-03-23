@@ -373,7 +373,6 @@ class Game {
         SOUNDS.gameMusic.pause();
         if (window.DeviceOrientationEvent) {
             window.removeEventListener('deviceorientation', orientationHandler);
-    }
 
         // Verificar recorde
         if (this.score > this.highScore) {

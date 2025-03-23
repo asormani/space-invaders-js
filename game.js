@@ -285,19 +285,43 @@ class Game {
             window.addEventListener('deviceorientation', orientationHandler, { passive: false});
         }
 
-        // Adicionar controles de toque para dispositivos móveis
+        // Adicionar botões de seta para dispositivos móveis
+        const createArrowButtons = () => {
+            const leftBtn = document.createElement('div');
+            leftBtn.id = 'left-btn';
+            leftBtn.className = 'arrow-btn';
+            document.body.appendChild(leftBtn);
+
+            const rightBtn = document.createElement('div');
+            rightBtn.id = 'right-btn';
+            rightBtn.className = 'arrow-btn';
+            document.body.appendChild(rightBtn);
+
+            leftBtn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                this.keys.left = true;
+            });
+
+            leftBtn.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                this.keys.left = false;
+            });
+
+            rightBtn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                this.keys.right = true;
+            });
+
+            rightBtn.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                this.keys.right = false;
+            });
+        };
+
+        // Adicionar toque para iniciar o jogo
         const touchStartHandler = (e) => {
             e.preventDefault();
-
-            // Verificar se o toque foi no botão de tiro
-            if (e.target.id === 'shoot-btn') {
-                return; // Se foi no botão de tiro, não muda direção
-            }
-
-            const touch = e.touches[0];
-            const x = touch.clientX;
-            const centerX = window.innerWidth / 2;
-
+            if (e.target.id === 'left-btn' || e.target.id === 'right-btn' || e.target.id === 'shoot-btn') return;
             if (this.state === GAME_STATE.MENU || this.state === GAME_STATE.GAME_OVER) {
                 this.keys.enter = true;
                 if (this.state === GAME_STATE.MENU) {
@@ -307,43 +331,9 @@ class Game {
                     document.getElementById('game-over-screen').style.display = 'none';
                     document.getElementById('start-screen').style.display = 'flex';
                 }
-                return;
-            }
-
-            if (this.state === GAME_STATE.PLAYING) {
-                if (x < centerX) {
-                    this.keys.left = true;
-                    this.keys.right = false;
-                } else {
-                    this.keys.right = true;
-                    this.keys.left = false;
-                }
             }
         };
 
-        const touchMoveHandler = (e) => {
-            e.preventDefault();
-            if (this.state !== GAME_STATE.PLAYING) return;
-
-            const touch = e.touches[0];
-            const x = touch.clientX;
-            const centerX = window.innerWidth / 2;
-
-            if (x < centerX) {
-                this.keys.left = true;
-                this.keys.right = false;
-            } else {
-                this.keys.right = true;
-                this.keys.left = false;
-            }
-        };
-
-        const touchEndHandler = (e) => {
-            e.preventDefault();
-            this.keys.left = false;
-            this.keys.right = false;
-            this.keys.enter = false;
-        };
         
         // Adicionar botão de tiro para dispositivos móveis
         const createShootButton = () => {
@@ -364,9 +354,8 @@ class Game {
         // Verificar se é um dispositivo móvel
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         if (isMobile) {
+            createArrowButtons();
             window.addEventListener('touchstart', touchStartHandler, { passive: false });
-            window.addEventListener('touchmove', touchMoveHandler, { passive: false });
-            window.addEventListener('touchend', touchEndHandler, { passive: false });
             createShootButton();
         }
     }

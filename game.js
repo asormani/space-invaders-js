@@ -262,21 +262,29 @@ class Game {
 
         // Dentro da classe Game, no método bindEvents():
         const orientationHandler = (e) => {
-            if (this.state !== GAME_STATE.PLAYING) return;
+            if (game.state !== GAME_STATE.PLAYING) return;
             const gamma = e.gamma; // Inclinação lateral
             if (gamma > 10) { // Inclinação para a direita
-                this.player.moveRight();
+                game.player.moveRight();
             } else if (gamma < -10) { // Inclinação para a esquerda
-                this.player.moveLeft();
+                game.player.moveLeft();
             }
         };
 
-        if (window.DeviceOrientationEvent) {
-            window.addEventListener('deviceorientation', orientationHandler);
+        if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+            DeviceOrientationEvent.requestPermission()
+                .then(permissionState => {
+                    if (permissionState === 'granted') {
+                        window.addEventListener('deviceorientation', orientationHandler);
+                    } else {
+                        console.log('Permissão de orientação do dispositivo negada.');
+                    }
+                })
+                .catch(console.error);
         } else {
-            console.log('DeviceOrientationEvent não é suportado.');
+            window.addEventListener('deviceorientation', orientationHandler);
         }
-        
+
         // Adicionar controles de toque para dispositivos móveis
         const touchStartHandler = (e) => {
             e.preventDefault();

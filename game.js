@@ -275,14 +275,14 @@ class Game {
             DeviceOrientationEvent.requestPermission()
                 .then(permissionState => {
                     if (permissionState === 'granted') {
-                        window.addEventListener('deviceorientation', orientationHandler);
+                        window.addEventListener('deviceorientation', orientationHandler, { passive: false});
                     } else {
                         console.log('Permissão de orientação do dispositivo negada.');
                     }
                 })
                 .catch(console.error);
         } else {
-            window.addEventListener('deviceorientation', orientationHandler);
+            window.addEventListener('deviceorientation', orientationHandler, { passive: false});
         }
 
         // Adicionar controles de toque para dispositivos móveis

@@ -371,9 +371,7 @@ class Game {
     gameOver() {
         this.state = GAME_STATE.GAME_OVER;
         SOUNDS.gameMusic.pause();
-        if (window.DeviceOrientationEvent) {
-            window.removeEventListener('deviceorientation', orientationHandler);
-
+        
         // Verificar recorde
         if (this.score > this.highScore) {
             this.highScore = this.score;

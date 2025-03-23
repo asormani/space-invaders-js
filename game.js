@@ -260,7 +260,24 @@ class Game {
             }
         });
 
-                // Adicionar controles de toque para dispositivos móveis
+        // Dentro da classe Game, no método bindEvents():
+        const orientationHandler = (e) => {
+            if (this.state !== GAME_STATE.PLAYING) return;
+            const gamma = e.gamma; // Inclinação lateral
+            if (gamma > 10) { // Inclinação para a direita
+                this.player.moveRight();
+            } else if (gamma < -10) { // Inclinação para a esquerda
+                this.player.moveLeft();
+            }
+        };
+
+        if (window.DeviceOrientationEvent) {
+            window.addEventListener('deviceorientation', orientationHandler);
+        } else {
+            console.log('DeviceOrientationEvent não é suportado.');
+        }
+        
+        // Adicionar controles de toque para dispositivos móveis
         const touchStartHandler = (e) => {
             e.preventDefault();
 
@@ -319,28 +336,6 @@ class Game {
             this.keys.right = false;
             this.keys.enter = false;
         };
-
-        // Dentro da classe Game, no método bindEvents():
-        const motionHandler = (e) => {
-            if (this.state !== GAME_STATE.PLAYING) return;
-            const accelerationX = e.accelerationIncludingGravity.x;
-            if (accelerationX > 1) { // Inclinação para a direita
-                this.player.moveRight();
-            } else if (accelerationX < -1) { // Inclinação para a esquerda
-                this.player.moveLeft();
-            }
-        };
-
-        window.addEventListener('devicemotion', motionHandler);
-
-        // Dentro da classe Game, no método bindEvents():
-        const endMotion = (e) => {
-            window.removeEventListener('devicemotion', motionHandler);
-        }
-
-        // Dentro do método gameOver() da classe Game:
-        window.removeEventListener('devicemotion', motionHandler);
-
         
         // Adicionar botão de tiro para dispositivos móveis
         const createShootButton = () => {
@@ -379,6 +374,9 @@ class Game {
     gameOver() {
         this.state = GAME_STATE.GAME_OVER;
         SOUNDS.gameMusic.pause();
+        if (window.DeviceOrientationEvent) {
+            window.removeEventListener('deviceorientation', orientationHandler);
+        }
 
         // Verificar recorde
         if (this.score > this.highScore) {

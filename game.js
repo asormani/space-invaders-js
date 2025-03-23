@@ -260,6 +260,66 @@ class Game {
             }
         });
 
+                // Adicionar controles de toque para dispositivos móveis
+        const touchStartHandler = (e) => {
+            e.preventDefault();
+
+            // Verificar se o toque foi no botão de tiro
+            if (e.target.id === 'shoot-btn') {
+                return; // Se foi no botão de tiro, não muda direção
+            }
+
+            const touch = e.touches[0];
+            const x = touch.clientX;
+            const centerX = window.innerWidth / 2;
+
+            if (this.state === GAME_STATE.MENU || this.state === GAME_STATE.GAME_OVER) {
+                this.keys.enter = true;
+                if (this.state === GAME_STATE.MENU) {
+                    this.startGame();
+                } else if (this.state === GAME_STATE.GAME_OVER) {
+                    this.state = GAME_STATE.MENU;
+                    document.getElementById('game-over-screen').style.display = 'none';
+                    document.getElementById('start-screen').style.display = 'flex';
+                }
+                return;
+            }
+
+            if (this.state === GAME_STATE.PLAYING) {
+                if (x < centerX) {
+                    this.keys.left = true;
+                    this.keys.right = false;
+                } else {
+                    this.keys.right = true;
+                    this.keys.left = false;
+                }
+            }
+        };
+
+        const touchMoveHandler = (e) => {
+            e.preventDefault();
+            if (this.state !== GAME_STATE.PLAYING) return;
+
+            const touch = e.touches[0];
+            const x = touch.clientX;
+            const centerX = window.innerWidth / 2;
+
+            if (x < centerX) {
+                this.keys.left = true;
+                this.keys.right = false;
+            } else {
+                this.keys.right = true;
+                this.keys.left = false;
+            }
+        };
+
+        const touchEndHandler = (e) => {
+            e.preventDefault();
+            this.keys.left = false;
+            this.keys.right = false;
+            this.keys.enter = false;
+        };
+
         // Dentro da classe Game, no método bindEvents():
         const motionHandler = (e) => {
             if (this.state !== GAME_STATE.PLAYING) return;

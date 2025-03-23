@@ -105,21 +105,45 @@ body {
     display: none;
 }
 
-#shoot-btn {
-    position: fixed;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 80px;
-    height: 80px;
-    background-color: rgba(255, 0, 0, 0.7);
-    border-radius: 50%;
-    z-index: 1000;
+.arrow-btn {
+    position: absolute;
+    bottom: 2vh; /* Use viewport height units */
+    width: 15vw; /* Use viewport width units */
+    height: 15vw;
+    background-color: #444;
+    color: #fff;
+    font-size: 3vw; /* Responsive font size */
     display: flex;
     justify-content: center;
     align-items: center;
-    box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
-    border: 2px solid #0f0;
+    border-radius: 10px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+#left-btn {
+    left: 5vw;
+}
+
+#right-btn {
+    left: 30vw;
+}
+
+.arrow-btn:active {
+    background-color: #555;
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+#shoot-btn{
+    position: absolute;
+    bottom: 2vh;
+    right: 5vw;
+    width: 15vw;
+    height: 15vw;
+    background-color: red;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 #shoot-btn:after {

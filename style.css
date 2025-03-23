@@ -124,8 +124,18 @@ body {
     left: 5vw;
 }
 
+#left-btn:after {
+    content: '⬅️';
+    font-size: 30px;
+}
+
 #right-btn {
     left: 30vw;
+}
+
+#right-btn:after {
+    content: '➡️';
+    font-size: 30px;
 }
 
 .arrow-btn:active {

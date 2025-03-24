@@ -400,7 +400,7 @@ class Game {
         }
 
         // Atualizar posição do jogador
-        this.player.update(deltaTime);
+        this.player.update();
 
         // Atualizar lasers do jogador
         for (let i = this.playerLasers.length - 1; i >= 0; i--) {
@@ -456,14 +456,17 @@ class Game {
 
             // Verificar colisão com o jogador
             if (this.checkCollision(this.alienLasers[i], this.player)) {
+                this.lives--;
                 this.alienLasers.splice(i, 1);
                 SOUNDS.playerExplosion.currentTime = 0;
                 SOUNDS.playerExplosion.play();
 
-                // Iniciar o efeito de piscar
-                ***this.player.isHit = true;***
+                if (this.lives <= 0) {
+                    this.gameOver();
+                    return;
+                }
 
-                continue; // Pular a lógica de perda de vida por enquanto
+                continue;
             }
 
             // Verificar colisão com barreiras
@@ -474,15 +477,6 @@ class Game {
                 }
             }
         }
-
-        // Verificar se o jogador foi atingido e o efeito de piscar terminou
-        ***if (this.player.isHit === false && this.player.hitTimer === 0 && this.lives > 0) {
-            this.lives--;
-            if (this.lives <= 0) {
-                this.gameOver();
-                return;
-            }
-        }***
 
         // Atualizar aliens
         let moveDown = false;
@@ -529,7 +523,7 @@ class Game {
             this.extraShip.update();
 
             // Remover nave extra se saiu da tela
-            if ((this.extraShip.direction > 0 && this.extraShip.x > GAME_WIDTH + 50) ||
+            if ((this.extraShip.direction > 0 && this.extraShip.x > GAME_WIDTH + 50) || 
                 (this.extraShip.direction < 0 && this.extraShip.x < -50)) {
                 this.extraShip = null;
                 this.extraShipTimer = Math.floor(Math.random() * 500) + 500;
@@ -675,10 +669,6 @@ class Game {
 // Classe do jogador
 class Player {
     constructor() {
-        this.isHit = false;
-        this.hitTimer = 0;
-        this.blinkInterval = 100; // Intervalo de 100ms entre cada piscar
-        this.blinkDuration = 1000; // Duração total de 1000ms (1 segundo)
         this.width = 50;
         this.height = 36;
         this.x = GAME_WIDTH / 2 - this.width / 2;
@@ -686,15 +676,7 @@ class Player {
         this.speed = PLAYER_SPEED;
     }
 
-    update(deltaTime) {
-        // controlar piscada
-        if (this.isHit) {
-            this.hitTimer += deltaTime;
-            if (this.hitTimer >= this.blinkDuration) {
-                this.isHit = false;
-                this.hitTimer = 0;
-            }
-        }
+    update() {
         // Restringir movimento às bordas da tela
         if (this.x < 0) {
             this.x = 0;
@@ -713,12 +695,6 @@ class Player {
     }
 
     draw(ctx) {
-        if (this.isHit && Math.floor(this.hitTimer / this.blinkInterval) % 2 === 0) {
-            // Não desenhar o jogador durante o piscar
-            return;
-        }
-
-        // Desenhar o jogador normalmente
         if (IMAGES.player && IMAGES.player.complete) {
             ctx.drawImage(IMAGES.player, this.x, this.y, this.width, this.height);
         } else {

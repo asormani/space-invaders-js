@@ -371,6 +371,9 @@ class Game {
     gameOver() {
         this.state = GAME_STATE.GAME_OVER;
         SOUNDS.gameMusic.pause();
+
+        // zerar dificuldade
+        this.alienSpeed = 1;
         
         // Verificar recorde
         if (this.score > this.highScore) {
